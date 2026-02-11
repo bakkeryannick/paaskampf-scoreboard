@@ -4,6 +4,7 @@ import type { Player } from '../../lib/types';
 interface PlayerListProps {
   players: Player[];
   ranked?: boolean;
+  reverseScoring?: boolean;
   onRemove?: (id: string) => void;
   onScore?: (playerId: string, points: number) => void;
   showScore?: boolean;
@@ -12,12 +13,15 @@ interface PlayerListProps {
 export function PlayerList({
   players,
   ranked = false,
+  reverseScoring = false,
   onRemove,
   onScore,
   showScore = true,
 }: PlayerListProps) {
   const sorted = ranked
-    ? [...players].sort((a, b) => b.score - a.score)
+    ? [...players].sort((a, b) =>
+        reverseScoring ? a.score - b.score : b.score - a.score
+      )
     : players;
 
   const mid = Math.ceil(sorted.length / 2);

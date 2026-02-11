@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { useGameStore } from './store/useGameStore';
@@ -8,6 +8,7 @@ import { SetupScreen } from './screens/SetupScreen';
 import { ScoreboardScreen } from './screens/ScoreboardScreen';
 import { TVScreen } from './screens/TVScreen';
 import { EventsScreen } from './screens/EventsScreen';
+import { PinScreen } from './screens/PinScreen';
 
 function AppInner() {
   const loadWeekend = useGameStore((s) => s.loadWeekend);
@@ -31,6 +32,29 @@ function AppInner() {
 }
 
 export default function App() {
+  const [verified, setVerified] = useState(
+    () => sessionStorage.getItem('pin_verified') === '1'
+  );
+
+  if (!verified) {
+    return (
+      <>
+        <Toaster
+          position="top-center"
+          theme="dark"
+          toastOptions={{
+            style: {
+              background: '#1e293b',
+              border: '1px solid #334155',
+              color: '#f1f5f9',
+            },
+          }}
+        />
+        <PinScreen onSuccess={() => setVerified(true)} />
+      </>
+    );
+  }
+
   return (
     <BrowserRouter>
       <Toaster

@@ -1,12 +1,24 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
 import { TVLeaderboard } from '../components/tv/TVLeaderboard';
+import type { Player } from '../lib/types';
 
 export function TVScreen() {
   const weekend = useGameStore((s) => s.weekend);
   const players = useGameStore((s) => s.players);
   const activeEvent = useGameStore((s) => s.activeEvent);
+  const eventScores = useGameStore((s) => s.eventScores);
+
+  const displayPlayers: Player[] = useMemo(() => {
+    if (!activeEvent) return players;
+    const scoreMap = new Map(eventScores.map((es) => [es.player_id, es.score]));
+    return players.map((p) => ({
+      ...p,
+      score: scoreMap.get(p.id) ?? 0,
+    }));
+  }, [activeEvent, players, eventScores]);
 
   return (
     <div className="min-h-dvh bg-slate-950 flex flex-col">
@@ -31,7 +43,10 @@ export function TVScreen() {
             Wachten op spelers...
           </p>
         ) : (
-          <TVLeaderboard players={players} />
+          <TVLeaderboard
+            players={displayPlayers}
+            reverseScoring={activeEvent?.reverse_scoring}
+          />
         )}
       </main>
     </div>

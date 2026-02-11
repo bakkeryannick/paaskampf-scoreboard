@@ -93,6 +93,7 @@ export function ScoreboardScreen() {
           <PlayerList
             players={displayPlayers}
             ranked
+            reverseScoring={activeEvent?.reverse_scoring}
             onScore={(playerId, pts) => scorePlayer(playerId, pts)}
           />
         </section>

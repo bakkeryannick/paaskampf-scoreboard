@@ -30,7 +30,7 @@ interface GameState {
 
   // Event actions
   loadEvents: () => Promise<void>;
-  createEvent: (name: string) => Promise<void>;
+  createEvent: (name: string, reverseScoring?: boolean) => Promise<void>;
   removeEvent: (id: string) => Promise<void>;
   setActiveEvent: (event: Event | null) => Promise<void>;
   toggleCountsForTotal: () => Promise<void>;
@@ -75,12 +75,15 @@ export const useGameStore = create<GameState>((set, get) => ({
         supabase.from('events').select('*').eq('weekend_id', weekend.id).order('sort_order'),
       ]);
       const sortedPlayers = players ?? [];
+      const activeEvt = (events ?? []).find((e: Event) => e.is_active) ?? null;
       set({
         players: sortedPlayers,
         teams: teams ?? [],
         events: events ?? [],
         previousLeader: sortedPlayers.length > 0
-          ? [...sortedPlayers].sort((a, b) => b.score - a.score)[0].id
+          ? [...sortedPlayers].sort((a, b) =>
+              activeEvt?.reverse_scoring ? a.score - b.score : b.score - a.score
+            )[0].id
           : null,
       });
     }
@@ -285,7 +288,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({ events: data ?? [] });
   },
 
-  createEvent: async (name: string) => {
+  createEvent: async (name: string, reverseScoring = false) => {
     const { weekend, players, events } = get();
     if (!weekend) return;
 
@@ -294,6 +297,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       .insert({
         weekend_id: weekend.id,
         name,
+        reverse_scoring: reverseScoring,
         sort_order: events.length,
       })
       .select()

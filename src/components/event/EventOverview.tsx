@@ -38,7 +38,9 @@ export function EventOverview() {
       const result = events.map((event) => {
         const eventScores = scores
           .filter((s) => s.event_id === event.id)
-          .sort((a, b) => b.score - a.score)
+          .sort((a, b) =>
+            event.reverse_scoring ? a.score - b.score : b.score - a.score
+          )
           .slice(0, 3);
 
         const topPlayers = eventScores.map((s) => {

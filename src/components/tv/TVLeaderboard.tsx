@@ -4,6 +4,7 @@ import type { Player } from '../../lib/types';
 
 interface TVLeaderboardProps {
   players: Player[];
+  reverseScoring?: boolean;
 }
 
 function RankIcon({ rank }: { rank: number }) {
@@ -62,8 +63,10 @@ function PlayerRow({ player, rank }: { player: Player; rank: number }) {
   );
 }
 
-export function TVLeaderboard({ players }: TVLeaderboardProps) {
-  const sorted = [...players].sort((a, b) => b.score - a.score);
+export function TVLeaderboard({ players, reverseScoring = false }: TVLeaderboardProps) {
+  const sorted = [...players].sort((a, b) =>
+    reverseScoring ? a.score - b.score : b.score - a.score
+  );
   const mid = Math.ceil(sorted.length / 2);
   const left = sorted.slice(0, mid);
   const right = sorted.slice(mid);
