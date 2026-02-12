@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useGameStore } from '../store/useGameStore';
 import { TVLeaderboard } from '../components/tv/TVLeaderboard';
 import type { Player } from '../lib/types';
@@ -20,6 +21,8 @@ export function TVScreen() {
     }));
   }, [activeEvent, players, eventScores]);
 
+  const liveUrl = `${window.location.origin}/live`;
+
   return (
     <div className="min-h-dvh bg-slate-950 flex flex-col">
       <header className="relative text-center py-6">
@@ -30,6 +33,15 @@ export function TVScreen() {
           <ArrowLeft size={16} />
           <span>Terug</span>
         </Link>
+        <div className="absolute right-4 top-4 flex flex-col items-center gap-1">
+          <QRCodeSVG
+            value={liveUrl}
+            size={80}
+            bgColor="transparent"
+            fgColor="#94a3b8"
+          />
+          <span className="text-xs text-slate-500">Scan voor scores</span>
+        </div>
         <h1 className="text-4xl font-black text-slate-100 tracking-tight">
           {weekend?.name ?? 'Paaskampf'}
         </h1>
