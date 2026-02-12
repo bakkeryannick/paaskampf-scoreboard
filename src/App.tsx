@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { useGameStore } from './store/useGameStore';
 import { useRealtimeSync } from './hooks/useRealtimeSync';
@@ -9,9 +9,14 @@ import { ScoreboardScreen } from './screens/ScoreboardScreen';
 import { TVScreen } from './screens/TVScreen';
 import { EventsScreen } from './screens/EventsScreen';
 import { PinScreen } from './screens/PinScreen';
+import { LiveScreen } from './screens/LiveScreen';
 
 function AppInner() {
   const loadWeekend = useGameStore((s) => s.loadWeekend);
+  const [verified, setVerified] = useState(
+    () => sessionStorage.getItem('pin_verified') === '1'
+  );
+  const location = useLocation();
 
   useEffect(() => {
     loadWeekend();
@@ -19,6 +24,19 @@ function AppInner() {
 
   useRealtimeSync();
   useConfetti();
+
+  // /live is publicly accessible without PIN
+  if (location.pathname === '/live') {
+    return (
+      <Routes>
+        <Route path="/live" element={<LiveScreen />} />
+      </Routes>
+    );
+  }
+
+  if (!verified) {
+    return <PinScreen onSuccess={() => setVerified(true)} />;
+  }
 
   return (
     <Routes>
@@ -32,29 +50,6 @@ function AppInner() {
 }
 
 export default function App() {
-  const [verified, setVerified] = useState(
-    () => sessionStorage.getItem('pin_verified') === '1'
-  );
-
-  if (!verified) {
-    return (
-      <>
-        <Toaster
-          position="top-center"
-          theme="dark"
-          toastOptions={{
-            style: {
-              background: '#1e293b',
-              border: '1px solid #334155',
-              color: '#f1f5f9',
-            },
-          }}
-        />
-        <PinScreen onSuccess={() => setVerified(true)} />
-      </>
-    );
-  }
-
   return (
     <BrowserRouter>
       <Toaster
