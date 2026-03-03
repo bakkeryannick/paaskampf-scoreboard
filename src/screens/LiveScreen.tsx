@@ -20,15 +20,15 @@ export function LiveScreen() {
 
   return (
     <div className="min-h-dvh bg-slate-950 flex flex-col">
-      <header className="text-center py-6">
-        <h1 className="text-4xl font-black text-slate-100 tracking-tight">
+      <header className="text-center py-4 sm:py-6">
+        <h1 className="text-2xl sm:text-4xl font-black text-slate-100 tracking-tight">
           {weekend?.name ?? 'Paaskampf'}
         </h1>
         {activeEvent && (
-          <p className="text-lg text-slate-400 mt-1">{activeEvent.name}</p>
+          <p className="text-base sm:text-lg text-slate-400 mt-1">{activeEvent.name}</p>
         )}
       </header>
-      <main className="flex-1 px-6 pb-8">
+      <main className="flex-1 px-3 sm:px-6 pb-8">
         {players.length === 0 ? (
           <p className="text-center text-2xl text-slate-500 mt-20">
             Wachten op spelers...

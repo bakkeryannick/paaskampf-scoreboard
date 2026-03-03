@@ -14,7 +14,7 @@ interface TeamZoneProps {
 }
 
 const btnClass =
-  'min-w-8 h-8 px-1.5 rounded-lg text-xs font-semibold bg-slate-700/60 text-slate-300 hover:bg-slate-600 active:scale-95 transition-colors';
+  'min-w-7 h-7 sm:min-w-8 sm:h-8 px-1 sm:px-1.5 rounded-lg text-xs font-semibold bg-slate-700/60 text-slate-300 hover:bg-slate-600 active:scale-95 transition-colors';
 
 export function TeamZone({
   team,
@@ -34,12 +34,12 @@ export function TeamZone({
       )}
       style={{ borderColor: isOver ? team.color : undefined }}
     >
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-1.5 sm:gap-2 mb-2">
         <div
           className="w-3 h-3 rounded-full shrink-0"
           style={{ backgroundColor: team.color }}
         />
-        <h3 className="font-semibold text-slate-100 flex-1 truncate">
+        <h3 className="font-semibold text-sm sm:text-base text-slate-100 flex-1 min-w-0 truncate">
           {team.name}
         </h3>
         {onScoreTeam && (
@@ -48,7 +48,7 @@ export function TeamZone({
           </button>
         )}
         <span
-          className={clsx('text-xl font-black tabular-nums', has67InScore(team.score) && 'easter-67')}
+          className={clsx('text-lg sm:text-xl font-black tabular-nums', has67InScore(team.score) && 'easter-67')}
           style={has67InScore(team.score) ? undefined : { color: team.color }}
         >
           {team.score}

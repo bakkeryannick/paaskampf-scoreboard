@@ -14,7 +14,7 @@ interface PlayerCardProps {
 }
 
 const btnClass =
-  'min-w-10 h-10 px-2 rounded-lg text-sm font-semibold bg-slate-700/60 text-slate-300 hover:bg-slate-600 active:scale-95 shrink-0 transition-colors';
+  'min-w-8 h-8 sm:min-w-10 sm:h-10 px-1.5 sm:px-2 rounded-lg text-xs sm:text-sm font-semibold bg-slate-700/60 text-slate-300 hover:bg-slate-600 active:scale-95 shrink-0 transition-colors';
 
 export function PlayerCard({
   player,
@@ -28,8 +28,8 @@ export function PlayerCard({
   return (
     <div
       className={clsx(
-        'flex items-center gap-3 rounded-xl border border-slate-700/60 bg-slate-800/40',
-        compact ? 'px-3 py-2' : 'px-4 py-3',
+        'flex items-center gap-1.5 sm:gap-3 rounded-xl border border-slate-700/60 bg-slate-800/40',
+        compact ? 'px-2 py-1.5 sm:px-3 sm:py-2' : 'px-2.5 py-2 sm:px-4 sm:py-3',
       )}
     >
       {dragHandleProps && (
@@ -63,7 +63,7 @@ export function PlayerCard({
         style={{ backgroundColor: player.color }}
       />
 
-      <span className="font-medium text-slate-100 flex-1 truncate">
+      <span className="font-medium text-sm sm:text-base text-slate-100 flex-1 min-w-0 truncate">
         {player.name}
       </span>
 
@@ -80,7 +80,7 @@ export function PlayerCard({
         <span
           className={clsx(
             'font-black tabular-nums text-center shrink-0',
-            compact ? 'text-xl min-w-[2ch]' : 'text-2xl min-w-[2.5ch]',
+            compact ? 'text-lg sm:text-xl min-w-[2ch]' : 'text-lg sm:text-2xl min-w-[2ch] sm:min-w-[2.5ch]',
             has67InScore(player.score) && 'easter-67',
           )}
           style={has67InScore(player.score) ? undefined : { color: player.color }}
