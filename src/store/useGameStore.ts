@@ -13,10 +13,10 @@ interface GameState {
 
   // Weekend actions
   loadWeekend: () => Promise<void>;
-  createWeekend: (name: string) => Promise<void>;
+  createWeekend: (name: string) => Promise<boolean>;
 
   // Player actions
-  addPlayer: (name: string, color: string) => Promise<void>;
+  addPlayer: (name: string, color: string) => Promise<boolean>;
   removePlayer: (id: string) => Promise<void>;
   updatePlayerTeam: (playerId: string, teamId: string | null) => Promise<void>;
 
@@ -59,11 +59,16 @@ export const useGameStore = create<GameState>((set, get) => ({
   eventScores: [],
 
   loadWeekend: async () => {
-    const { data: weekends } = await supabase
+    const { data: weekends, error } = await supabase
       .from('weekend')
       .select('*')
       .eq('is_active', true)
       .limit(1);
+
+    if (error) {
+      console.error('Failed to load weekend:', error);
+      return;
+    }
 
     const weekend = weekends?.[0] ?? null;
     set({ weekend });
@@ -71,7 +76,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (weekend) {
       const [{ data: players }, { data: teams }, { data: events }] = await Promise.all([
         supabase.from('players').select('*').eq('weekend_id', weekend.id).order('sort_order'),
-        supabase.from('teams').select('*').eq('weekend_id', weekend.id).order('sort_order'),
+        supabase.from('teams').select('*').eq('weekend_id', weekend.id).is('event_id', null).order('sort_order'),
         supabase.from('events').select('*').eq('weekend_id', weekend.id).order('sort_order'),
       ]);
       const sortedPlayers = players ?? [];
@@ -90,22 +95,26 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   createWeekend: async (name: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('weekend')
       .insert({ name })
       .select()
       .single();
 
-    if (data) {
-      set({ weekend: data, players: [], teams: [], events: [], activeEvent: null, eventScores: [] });
+    if (error || !data) {
+      console.error('Failed to create weekend:', error);
+      return false;
     }
+
+    set({ weekend: data, players: [], teams: [], events: [], activeEvent: null, eventScores: [] });
+    return true;
   },
 
   addPlayer: async (name: string, color: string) => {
     const { weekend, players } = get();
-    if (!weekend) return;
+    if (!weekend) return false;
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('players')
       .insert({
         weekend_id: weekend.id,
@@ -116,9 +125,13 @@ export const useGameStore = create<GameState>((set, get) => ({
       .select()
       .single();
 
-    if (data) {
-      set((s) => ({ players: [...s.players, data] }));
+    if (error || !data) {
+      console.error('Failed to add player:', error);
+      return false;
     }
+
+    set((s) => ({ players: [...s.players, data] }));
+    return true;
   },
 
   removePlayer: async (id: string) => {
@@ -434,6 +447,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   upsertTeam: (team) => {
+    const { activeEvent } = get();
+    const expectedEventId = activeEvent?.id ?? null;
+    // Only accept teams matching the current event context
+    if ((team.event_id ?? null) !== expectedEventId) return;
     set((s) => {
       const idx = s.teams.findIndex((t) => t.id === team.id);
       if (idx >= 0) {

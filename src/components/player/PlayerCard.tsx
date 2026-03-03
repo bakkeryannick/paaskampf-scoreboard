@@ -1,6 +1,7 @@
 import { clsx } from 'clsx';
 import { Trash2 } from 'lucide-react';
 import type { Player } from '../../lib/types';
+import { has67InScore, is67RankPair } from '../../lib/detect67';
 
 interface PlayerCardProps {
   player: Player;
@@ -50,7 +51,8 @@ export function PlayerCard({
       {rank != null && (
         <span className={clsx(
           'font-bold shrink-0 w-6 text-center',
-          rank <= 3 ? 'text-base text-slate-300' : 'text-sm text-slate-500'
+          rank <= 3 ? 'text-base text-slate-300' : 'text-sm text-slate-500',
+          is67RankPair(rank) && 'easter-67'
         )}>
           {rank}
         </span>
@@ -79,8 +81,9 @@ export function PlayerCard({
           className={clsx(
             'font-black tabular-nums text-center shrink-0',
             compact ? 'text-xl min-w-[2ch]' : 'text-2xl min-w-[2.5ch]',
+            has67InScore(player.score) && 'easter-67',
           )}
-          style={{ color: player.color }}
+          style={has67InScore(player.score) ? undefined : { color: player.color }}
         >
           {player.score}
         </span>

@@ -7,3 +7,18 @@ html, body, #root {
 * {
   -webkit-tap-highlight-color: transparent;
 }
+
+@keyframes rainbow-67 {
+  0%   { color: #ff6b6b; }
+  15%  { color: #ffa94d; }
+  30%  { color: #ffd43b; }
+  45%  { color: #69db7c; }
+  60%  { color: #4dabf7; }
+  75%  { color: #b197fc; }
+  90%  { color: #f783ac; }
+  100% { color: #ff6b6b; }
+}
+
+.easter-67 {
+  animation: rainbow-67 2s ease-in-out infinite;
+}

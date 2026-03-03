@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { Trophy, Medal } from 'lucide-react';
 import type { Player } from '../../lib/types';
+import { has67InScore, is67RankPair } from '../../lib/detect67';
 
 interface TVLeaderboardProps {
   players: Player[];
@@ -12,7 +13,7 @@ function RankIcon({ rank }: { rank: number }) {
   if (rank === 2) return <Medal size={28} className="text-slate-300" />;
   if (rank === 3) return <Medal size={28} className="text-amber-600" />;
   return (
-    <span className="text-3xl font-bold text-slate-600 w-8 text-center">
+    <span className={`text-3xl font-bold text-slate-600 w-8 text-center${is67RankPair(rank) ? ' easter-67' : ''}`}>
       {rank}
     </span>
   );
@@ -54,8 +55,8 @@ function PlayerRow({ player, rank }: { player: Player; rank: number }) {
         animate={{ scale: 1 }}
         className={`font-black tabular-nums ${
           isTop3 ? 'text-4xl' : 'text-3xl'
-        }`}
-        style={{ color: player.color }}
+        }${has67InScore(player.score) ? ' easter-67' : ''}`}
+        style={has67InScore(player.score) ? undefined : { color: player.color }}
       >
         {player.score}
       </motion.span>

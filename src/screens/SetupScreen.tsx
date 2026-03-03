@@ -18,13 +18,21 @@ export function SetupScreen() {
   const [weekendName, setWeekendName] = useState('Paaskampf 2026');
 
   const handleCreateWeekend = async () => {
-    await createWeekend(weekendName);
-    toast.success('Weekend aangemaakt!');
+    const ok = await createWeekend(weekendName);
+    if (ok) {
+      toast.success('Weekend aangemaakt!');
+    } else {
+      toast.error('Kon weekend niet aanmaken. Controleer je internetverbinding of probeer het later opnieuw.');
+    }
   };
 
   const handleAddPlayer = async (name: string, color: string) => {
-    await addPlayer(name, color);
-    toast.success(`${name} toegevoegd`);
+    const ok = await addPlayer(name, color);
+    if (ok) {
+      toast.success(`${name} toegevoegd`);
+    } else {
+      toast.error('Kon speler niet toevoegen. Controleer je internetverbinding.');
+    }
   };
 
   const handleStart = () => {

@@ -3,6 +3,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { clsx } from 'clsx';
 import type { Team, Player } from '../../lib/types';
 import { DraggablePlayerCard } from './DraggablePlayerCard';
+import { has67InScore } from '../../lib/detect67';
 
 interface TeamZoneProps {
   team: Team;
@@ -47,8 +48,8 @@ export function TeamZone({
           </button>
         )}
         <span
-          className="text-xl font-black tabular-nums"
-          style={{ color: team.color }}
+          className={clsx('text-xl font-black tabular-nums', has67InScore(team.score) && 'easter-67')}
+          style={has67InScore(team.score) ? undefined : { color: team.color }}
         >
           {team.score}
         </span>
