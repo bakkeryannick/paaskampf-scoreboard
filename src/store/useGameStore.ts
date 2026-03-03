@@ -111,7 +111,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   addPlayer: async (name: string, color: string) => {
-    const { weekend, players } = get();
+    const { weekend, players, activeEvent } = get();
     if (!weekend) return false;
 
     const { data, error } = await supabase
@@ -131,6 +131,24 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
 
     set((s) => ({ players: [...s.players, data] }));
+
+    // Create event_scores for all existing events so the player can be dragged into teams
+    const { events } = get();
+    if (events.length > 0) {
+      const rows = events.map((e) => ({
+        event_id: e.id,
+        player_id: data.id,
+        score: 0,
+      }));
+      const { data: scores } = await supabase.from('event_scores').insert(rows).select();
+      if (scores && activeEvent) {
+        const activeScore = scores.find((s) => s.event_id === activeEvent.id);
+        if (activeScore) {
+          set((s) => ({ eventScores: [...s.eventScores, activeScore] }));
+        }
+      }
+    }
+
     return true;
   },
 
